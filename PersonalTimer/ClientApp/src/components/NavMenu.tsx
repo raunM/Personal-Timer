@@ -21,7 +21,7 @@ function NavMenu(props: Props) {
     logoutUser();
     history.push({ pathname: "/" });
     props.setLoggedIn(false);
-	}
+  }
 
   return (
     <header>

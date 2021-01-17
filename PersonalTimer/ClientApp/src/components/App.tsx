@@ -18,7 +18,7 @@ export default function App() {
       setLoggedIn(true);
     } else {
       setLoggedIn(false);
-		}
+    }
   }, []);
 
   return (

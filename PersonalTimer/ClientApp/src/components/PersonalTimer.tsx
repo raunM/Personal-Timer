@@ -41,7 +41,7 @@ function PersonalTimer() {
     timerRef.current.stop();
     setTimerRunning(false);
     setFinalTime(Math.floor(timerRef.current.getTime() / 1000));
-	}
+  }
 
   function stopTimer(stop: () => void, timeInSeconds: number): void {
     stop();
@@ -55,7 +55,7 @@ function PersonalTimer() {
     history.push("/time-logs");
   }
 
-	return (
+  return (
     <Container className="centered-component-content w-25">
       <div className="d-flex flex-column flex-grow-1 text-center">
         <h1>New Time Log</h1>
@@ -121,8 +121,8 @@ function PersonalTimer() {
           <Button type="submit" color="primary" disabled={!canSubmit}>Save</Button>
         </Form>
       </div>
-		</Container>
-	);
+    </Container>
+  );
 }
 
 export default PersonalTimer;

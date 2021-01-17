@@ -23,3 +23,12 @@ code {
 .account-error {
   color: red;
 }
+
+.table thead th {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+table th, .table td {
+  border-top: 1px solid black;
+}

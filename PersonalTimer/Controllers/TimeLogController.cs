@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using PersonalTimer.Models;
 using PersonalTimer.Models.Requests;
-using System;
-using System.Collections.Generic;
+using PersonalTimer.Repository;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -25,7 +22,7 @@ namespace PersonalTimer.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<TimeLog>> GetAllTimeLogs()
+        public async Task<IActionResult> GetTimeLogsAsync()
         {
             var identity = User.Identity as ClaimsIdentity;
             if (identity != null)
@@ -33,16 +30,15 @@ namespace PersonalTimer.Controllers
                 var claims = identity.Claims;
                 var userId = claims.Where(p => p.Type == "id").FirstOrDefault()?.Value;
                 var timeLogs = await _timeLogRepository.GetTimeLogs(userId);
-                return timeLogs;
+                return Ok(timeLogs);
             }
             else
             {
-                return new List<TimeLog>();
+                return Unauthorized();
             }
         }
 
         [HttpPost]
-        [Route("create")]
         public async Task<IActionResult> CreateTimeLogAsync([FromBody] TimeLogModel timeLogModel)
         {
             if (!ModelState.IsValid)
@@ -66,14 +62,16 @@ namespace PersonalTimer.Controllers
 
                 await _timeLogRepository.CreateTimeLog(timeLog);
 
-                return Ok();
+                // respond with new time log in case want to use later
+                return Ok(timeLog);
             }
-                
-            return BadRequest();
+            else
+            {
+                return Unauthorized();
+            }
         }
 
-        [HttpDelete]
-        [Route("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTimeLogAsync(int id)
         {
             var identity = User.Identity as ClaimsIdentity;
@@ -83,8 +81,10 @@ namespace PersonalTimer.Controllers
 
                 return Ok();
             }
-
-            return BadRequest();
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 }

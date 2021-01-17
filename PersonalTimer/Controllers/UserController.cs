@@ -41,9 +41,9 @@ namespace PersonalTimer.Controllers
             if (existingUser != null)
             {
                 return Conflict(new AuthenticationResultModel 
-                { 
+                {
                     Success = false, 
-                    Errors = new List<string>() { "This email address is taken." } 
+                    Errors = new List<string>() { "This email address is already taken." } 
                 });
             }
 
@@ -75,21 +75,17 @@ namespace PersonalTimer.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new AuthenticationResultModel
-                {
-                    Success = false,
-                    Errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage))
-                });
+                return BadRequest(ModelState);
             }
 
             var user = await _userManager.FindByEmailAsync(loginModel.Email);
 
             if (user == null)
             {
-                return Conflict(new AuthenticationResultModel
+                return Unauthorized(new AuthenticationResultModel
                 {
                     Success = false,
-                    Errors = new List<string>() { "Incorrect email and/or password." }
+                    Errors = new List<string>() { "The email address and/or password you entered is incorrect. Please try again." }
                 });
             }
 
@@ -100,7 +96,7 @@ namespace PersonalTimer.Controllers
                 return Unauthorized(new AuthenticationResultModel
                 {
                     Success = false,
-                    Errors = new List<string>() { "Incorrect email and/or password." }
+                    Errors = new List<string>() { "The email address and/or password you entered is incorrect. Please try again." }
                 });
             }
 
@@ -109,9 +105,9 @@ namespace PersonalTimer.Controllers
 
         public AuthenticationResultModel GenerateAuthenticationResult(IdentityUser user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["ApplicationSettings:JWTSecret"].ToString());
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var jwtHandler = new JwtSecurityTokenHandler();
+            var jwtKey = Encoding.UTF8.GetBytes(_configuration["ApplicationSettings:JWTSecret"].ToString());
+            var jwtDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
@@ -121,15 +117,15 @@ namespace PersonalTimer.Controllers
                     new Claim("id", user.Id)
                 }),
                 Expires = DateTime.UtcNow.AddHours(11),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(jwtKey), SecurityAlgorithms.HmacSha256Signature)
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var jwt = jwtHandler.CreateToken(jwtDescriptor);
 
             return new AuthenticationResultModel
             {
                 Success = true,
-                Token = tokenHandler.WriteToken(token)
+                Token = jwtHandler.WriteToken(jwt)
             };
         }
     }

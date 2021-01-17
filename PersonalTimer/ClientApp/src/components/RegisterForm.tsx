@@ -1,4 +1,4 @@
-﻿import React from "react";
+﻿import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { registerUser } from "../services/UserAPI";
@@ -11,14 +11,17 @@ type Props = {
 export default function RegisterForm(props: Props) {
   const history = useHistory();
   const { register, handleSubmit, formState: { dirtyFields }, errors } = useForm();
+  const [authenticationErrors, setAuthenticationErrors] = useState<string[]>([]);
 
   const canSubmit = !!dirtyFields.email && !!dirtyFields.password;
 
   async function onSubmit(userData: any) {
-    console.log(userData);
-    if (await registerUser(userData)) {
+    const registerResult = await registerUser(userData);
+    if (registerResult.success) {
       props.setLoggedIn(true);
       history.push("/personal-timer");
+    } else {
+      setAuthenticationErrors(registerResult.errors);
     }
   }
 
@@ -53,6 +56,14 @@ export default function RegisterForm(props: Props) {
             />
             {(errors.password?.type === "required" || errors.password?.type === "minLength") &&
               <p className="account-error">Please provide a password that is at least 4 characters long.</p>
+            }
+
+            {authenticationErrors.length > 0 && 
+              authenticationErrors.map((ae, key) => (
+                <p key={key} className="account-error">
+                  {ae}
+                </p>
+              ))
             }
           </div>
 

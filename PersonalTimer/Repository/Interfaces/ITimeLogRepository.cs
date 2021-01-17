@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using PersonalTimer.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace PersonalTimer.Models
+namespace PersonalTimer.Repository
 {
     public interface ITimeLogRepository
     {

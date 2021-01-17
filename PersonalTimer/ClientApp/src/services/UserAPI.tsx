@@ -1,24 +1,30 @@
 import axios from "axios";
 
-export async function registerUser(userData: any): Promise<boolean> {
+type AuthenticationResult = {
+  token: string;
+  success: boolean;
+  errors: Array<string>;
+}
+
+export async function registerUser(userData: any): Promise<AuthenticationResult> {
   try {
     const response = await axios.post("user/register", userData);
     const result = await response.data;
     localStorage.setItem("user", result.token);
-    return true;
+    return result;
   } catch(error) {
-    return false;
-	}
+    return error.response.data;
+  }
 }
 
-export async function loginUser(userData: any): Promise<boolean> {
+export async function loginUser(userData: any): Promise<AuthenticationResult> {
   try {
     const response = await axios.post("user/login", userData);
     const result = await response.data;
     localStorage.setItem("user", result.token);
-    return true;
-  } catch (error) {
-    return false;
+    return result;
+  } catch(error) {
+    return error.response.data;
   }
 }
 

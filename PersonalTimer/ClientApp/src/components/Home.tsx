@@ -11,15 +11,16 @@ type Props = {
 
 export default function Home(props: Props) {
   const { register, handleSubmit, formState: { dirtyFields }, errors } = useForm();
-  const [invalidUserData, setInvalidUserData] = useState<boolean>(false);
+  const [authenticationErrors, setAuthenticationErrors] = useState<string[]>([]);
 
   const canSubmit = !!dirtyFields.email && !!dirtyFields.password;
 
   async function onSubmit(userData: any) {
-    if (await loginUser(userData)) {
-     props.setLoggedIn(true);
+    const loginResult = await loginUser(userData);
+    if (loginResult.success) {
+      props.setLoggedIn(true);
     } else {
-     setInvalidUserData(true);
+      setAuthenticationErrors(loginResult.errors);
     }
   }
 
@@ -56,10 +57,13 @@ export default function Home(props: Props) {
               {errors.password &&
                 <p className="account-error">{errors.password.message}</p>
               }
-              {invalidUserData &&
-                <p className="account-error">
-                  The email address and/or password you entered is incorrect. Please try again.
-                </p>
+
+              {authenticationErrors.length > 0 && 
+                authenticationErrors.map((ae, key) => (
+                  <p key={key} className="account-error">
+                    {ae}
+                  </p>
+                ))
               }
             </div>
 

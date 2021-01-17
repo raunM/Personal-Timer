@@ -3,7 +3,7 @@
 export async function createTimeLog(timeLogData: any): Promise<any> {
   const token = localStorage.getItem("user");
 
-  const resp = await axios.post("time-log/create", 
+  const response = await axios.post("time-log", 
     JSON.stringify(timeLogData),
     {
       headers:
@@ -14,8 +14,8 @@ export async function createTimeLog(timeLogData: any): Promise<any> {
     }
   );
 
-  const results = await resp.data;
-  return results;
+  const result = await response.data;
+  return result;
 }
 
 function formatTime(timeInSeconds: number): {} {
@@ -37,7 +37,7 @@ function formatTime(timeInSeconds: number): {} {
 export async function getTimeLogs(): Promise<any> {
   const token = localStorage.getItem("user");
 
-  const resp = await axios.get("time-log",
+  const response = await axios.get("time-log",
     {
       headers:
       {
@@ -47,7 +47,7 @@ export async function getTimeLogs(): Promise<any> {
     }
   );
 
-  let results = await resp.data;
+  let results = await response.data;
 
   results = results.map((tl: any) => (
     {
@@ -65,7 +65,7 @@ export async function getTimeLogs(): Promise<any> {
 export async function deleteTimeLog(id: number): Promise<any> {
   const token = localStorage.getItem("user");
 
-  const resp = await axios.delete("time-log/delete/" + id,
+  const resp = await axios.delete("time-log/" + id,
     {
       headers:
       {

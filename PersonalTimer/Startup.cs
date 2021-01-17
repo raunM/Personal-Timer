@@ -9,8 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using PersonalTimer.Models;
+using PersonalTimer.Repository;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PersonalTimer
 {
